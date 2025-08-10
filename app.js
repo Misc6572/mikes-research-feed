@@ -1,9 +1,3 @@
-// Minimal React + ReactDOM UMD builds from CDN
-// We’ll load React and ReactDOM from CDN in index.html dynamically
-
-// But since we can't install, we will use Preact (small React alternative) with htm for JSX-like syntax
-// This script uses Preact + htm for simplicity
-
 const scriptReact = document.createElement('script');
 scriptReact.src = 'https://unpkg.com/preact@10.13.2/dist/preact.umd.js';
 document.head.appendChild(scriptReact);
@@ -33,48 +27,45 @@ scriptReactDOM.onload = () => {
     { id: "OECD", title: "OECD", url: "https://www.oecd.org/rss/" }
   ];
 
-  const PROXY = "https://api.allorigins.win/get?url=";
+  // rss2json proxy endpoint
+  const PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
 
   async function fetchFeed(url) {
-    const res = await fetch(PROXY + encodeURIComponent(url));
-    if (!res.ok) throw new Error("Network error");
-    const json = await res.json();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(json.contents, "text/xml");
-    if (xml.querySelector("parsererror")) throw new Error("XML parse error");
-    const items = Array.from(xml.querySelectorAll("item")).map(item => ({
-      title: item.querySelector("title")?.textContent || "No title",
-      link: item.querySelector("link")?.textContent || "#",
-      pubDate: item.querySelector("pubDate")?.textContent || "",
-      description: item.querySelector("description")?.textContent || ""
-    }));
-    return items;
+    try {
+      const res = await fetch(PROXY + encodeURIComponent(url));
+      if (!res.ok) throw new Error("Network error");
+      const data = await res.json();
+      if (data.status !== "ok") throw new Error("RSS parse error");
+      return data.items.map(item => ({
+        title: item.title || "No title",
+        link: item.link || "#",
+        pubDate: item.pubDate || "",
+        description: item.description || ""
+      }));
+    } catch (e) {
+      console.warn(`Failed to load feed ${url}: ${e.message}`);
+      return [];
+    }
   }
 
   function App() {
     const [feedItems, setFeedItems] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const [filterSource, setFilterSource] = useState("ALL");
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
       setLoading(true);
-      setError(null);
       (async () => {
-        const all = [];
+        let all = [];
         for (const feed of FEEDS) {
-          try {
-            const items = await fetchFeed(feed.url);
-            const annotated = items.map(i => ({
-              ...i,
-              source: feed.title,
-              pubDateDate: new Date(i.pubDate)
-            }));
-            all.push(...annotated);
-          } catch (e) {
-            console.warn(`Failed to load ${feed.title}`, e);
-          }
+          const items = await fetchFeed(feed.url);
+          const annotated = items.map(i => ({
+            ...i,
+            source: feed.title,
+            pubDateDate: new Date(i.pubDate)
+          }));
+          all.push(...annotated);
         }
         all.sort((a, b) => b.pubDateDate - a.pubDateDate);
         setFeedItems(all);
@@ -111,7 +102,6 @@ scriptReactDOM.onload = () => {
           </select>
         </div>
         ${loading && html`<p>Loading feeds...</p>`}
-        ${error && html`<p class="text-red-600">${error}</p>`}
         <ul class="space-y-4">
           ${filteredItems.length === 0 && !loading ? html`<p>No matching articles.</p>` : null}
           ${filteredItems.map(
@@ -137,3 +127,4 @@ scriptReactDOM.onload = () => {
 
   render(html`<${App} />`, document.getElementById("root"));
 };
+
