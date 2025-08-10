@@ -82,18 +82,18 @@ scriptReactDOM.onload = () => {
 
     return html`
       <div class="max-w-6xl mx-auto px-4">
-        <h1 class="text-4xl font-extrabold text-center mb-8 mt-4 uppercase tracking-wide">MIKE'S AMAZING NEWS FEED</h1>
+        <h1 class="text-4xl font-extrabold text-center mb-6 mt-6 uppercase tracking-wide">MIKE'S AMAZING NEWS FEED</h1>
 
-        <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
+        <div class="flex flex-col sm:flex-row gap-4 mb-10 justify-center items-center">
           <input
-            class="flex-grow p-3 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full sm:w-80 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="text"
             placeholder="Search titles or descriptions"
             value=${searchTerm}
             onInput=${e => setSearchTerm(e.target.value)}
           />
           <select
-            class="p-3 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full sm:w-48 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value=${filterSource}
             onChange=${e => setFilterSource(e.target.value)}
           >
@@ -109,7 +109,7 @@ scriptReactDOM.onload = () => {
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           ${filteredItems.map(item => html`
             <article
-              class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300"
+              class="bg-white rounded-lg border border-gray-300 p-6 hover:shadow-lg transition-shadow duration-300"
               key=${item.link}
             >
               <a
@@ -131,5 +131,3 @@ scriptReactDOM.onload = () => {
 
   render(html`<${App} />`, document.getElementById("root"));
 };
-
-
