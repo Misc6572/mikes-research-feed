@@ -27,7 +27,6 @@ scriptReactDOM.onload = () => {
     { id: "OECD", title: "OECD", url: "https://www.oecd.org/rss/" }
   ];
 
-  // rss2json proxy endpoint
   const PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
 
   async function fetchFeed(url) {
@@ -43,7 +42,7 @@ scriptReactDOM.onload = () => {
         description: item.description || ""
       }));
     } catch (e) {
-      console.warn(`Failed to load feed ${url}: ${e.message}`);
+      console.warn(`Skipping feed at ${url} due to error: ${e.message}`);
       return [];
     }
   }
@@ -82,18 +81,19 @@ scriptReactDOM.onload = () => {
     }, [feedItems, filterSource, searchTerm]);
 
     return html`
-      <div class="max-w-5xl mx-auto">
-        <h1 class="text-3xl font-bold mb-4">Research News Feed</h1>
-        <div class="flex flex-col sm:flex-row gap-4 mb-6">
+      <div class="max-w-6xl mx-auto px-4">
+        <h1 class="text-4xl font-extrabold text-center mb-8 mt-4 uppercase tracking-wide">MIKE'S AMAZING NEWS FEED</h1>
+
+        <div class="flex flex-col sm:flex-row gap-4 mb-8 justify-center">
           <input
-            class="flex-grow p-2 border rounded"
+            class="flex-grow p-3 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="text"
             placeholder="Search titles or descriptions"
             value=${searchTerm}
             onInput=${e => setSearchTerm(e.target.value)}
           />
           <select
-            class="p-2 border rounded"
+            class="p-3 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             value=${filterSource}
             onChange=${e => setFilterSource(e.target.value)}
           >
@@ -101,30 +101,35 @@ scriptReactDOM.onload = () => {
             ${FEEDS.map(feed => html`<option value=${feed.title}>${feed.title}</option>`)}
           </select>
         </div>
-        ${loading && html`<p>Loading feeds...</p>`}
-        <ul class="space-y-4">
-          ${filteredItems.length === 0 && !loading ? html`<p>No matching articles.</p>` : null}
-          ${filteredItems.map(
-            item => html`
-              <li class="bg-white rounded shadow p-4" key=${item.link}>
-                <a
-                  href=${item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-600 hover:underline font-semibold text-lg"
-                >
-                  ${item.title}
-                </a>
-                <p class="text-sm text-gray-600">${item.source} — ${item.pubDateDate.toLocaleDateString()}</p>
-                <p class="mt-2 text-gray-700 line-clamp-3" dangerouslySetInnerHTML=${{ __html: item.description }}></p>
-              </li>
-            `
-          )}
-        </ul>
+
+        ${loading && html`<p class="text-center text-lg">Loading feeds...</p>`}
+
+        ${!loading && filteredItems.length === 0 && html`<p class="text-center text-gray-500 text-lg">No matching articles.</p>`}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          ${filteredItems.map(item => html`
+            <article
+              class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300"
+              key=${item.link}
+            >
+              <a
+                href=${item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-700 hover:underline font-semibold text-xl"
+              >
+                ${item.title}
+              </a>
+              <p class="mt-1 text-gray-500 text-sm">${item.source} — ${item.pubDateDate.toLocaleDateString()}</p>
+              <p class="mt-3 text-gray-700 line-clamp-4" dangerouslySetInnerHTML=${{ __html: item.description }}></p>
+            </article>
+          `)}
+        </div>
       </div>
     `;
   }
 
   render(html`<${App} />`, document.getElementById("root"));
 };
+
 
