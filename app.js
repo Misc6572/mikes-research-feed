@@ -39,7 +39,7 @@ scriptReactDOM.onload = () => {
         title: item.title || "No title",
         link: item.link || "#",
         pubDate: item.pubDate || "",
-        description: item.description || ""
+        description: item.description || "",
       }));
     } catch (e) {
       console.warn(`Skipping feed at ${url} due to error: ${e.message}`);
@@ -62,7 +62,7 @@ scriptReactDOM.onload = () => {
           const annotated = items.map(i => ({
             ...i,
             source: feed.title,
-            pubDateDate: new Date(i.pubDate)
+            pubDateDate: new Date(i.pubDate),
           }));
           all.push(...annotated);
         }
@@ -75,71 +75,68 @@ scriptReactDOM.onload = () => {
     const filteredItems = useMemo(() => {
       return feedItems.filter(item => {
         const matchesSource = filterSource === "ALL" || item.source === filterSource;
-        const matchesSearch = searchTerm === "" || (item.title + item.description).toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch =
+          searchTerm === "" ||
+          (item.title + item.description).toLowerCase().includes(searchTerm.toLowerCase());
         return matchesSource && matchesSearch;
       });
     }, [feedItems, filterSource, searchTerm]);
 
-    // Group filtered items by source
-    const groupedBySource = useMemo(() => {
-      const groups = {};
-      filteredItems.forEach(item => {
-        if (!groups[item.source]) groups[item.source] = [];
-        groups[item.source].push(item);
-      });
-      return groups;
-    }, [filteredItems]);
-
     return html`
-      <div class="max-w-7xl mx-auto px-6 py-8">
-        <h1 class="text-5xl font-extrabold uppercase tracking-wide mb-10 text-center">MIKE'S AMAZING NEWS FEED</h1>
+      <div class="max-w-5xl mx-auto px-4 py-8">
+        <div class="flex flex-col items-center mb-12 space-y-6">
+          <h1 class="text-4xl font-extrabold uppercase tracking-wide text-center">
+            MIKE'S AMAZING NEWS FEED
+          </h1>
 
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-5 mb-12">
-          <input
-            class="w-full sm:w-96 p-4 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            type="text"
-            placeholder="Search titles or descriptions"
-            value=${searchTerm}
-            onInput=${e => setSearchTerm(e.target.value)}
-          />
-          <select
-            class="w-full sm:w-48 p-4 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value=${filterSource}
-            onChange=${e => setFilterSource(e.target.value)}
-          >
-            <option value="ALL">All Sources</option>
-            ${FEEDS.map(feed => html`<option value=${feed.title}>${feed.title}</option>`)}
-          </select>
+          <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-xl">
+            <input
+              class="w-full sm:w-72 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type="text"
+              placeholder="Search titles or descriptions"
+              value=${searchTerm}
+              onInput=${(e) => setSearchTerm(e.target.value)}
+            />
+            <select
+              class="w-full sm:w-48 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value=${filterSource}
+              onChange=${(e) => setFilterSource(e.target.value)}
+            >
+              <option value="ALL">All Sources</option>
+              ${FEEDS.map(
+                (feed) => html`<option value=${feed.title}>${feed.title}</option>`
+              )}
+            </select>
+          </div>
         </div>
 
-        ${loading && html`<p class="text-center text-lg">Loading feeds...</p>`}
+        ${loading &&
+        html`<p class="text-center text-lg font-semibold">Loading feeds...</p>`}
 
-        ${!loading && filteredItems.length === 0 && html`<p class="text-center text-gray-500 text-lg">No matching articles.</p>`}
+        ${!loading && filteredItems.length === 0 &&
+        html`<p class="text-center text-gray-500 text-lg">No matching articles.</p>`}
 
-        ${!loading && Object.entries(groupedBySource).map(([source, items]) => html`
-          <section key=${source} class="mb-14">
-            <h2 class="text-3xl font-bold mb-6 border-b-4 border-blue-600 pb-2">${source}</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-              ${items.map(item => html`
-                <article
-                  class="bg-white rounded-lg border border-gray-300 shadow-md p-6 hover:shadow-xl transition-shadow duration-300"
-                  key=${item.link}
+        <section id="listResults" class="space-y-8">
+          ${filteredItems.map(
+            (item) => html`
+              <article
+                class="border-2 border-blue-500 rounded-lg p-6 shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300"
+                key=${item.link}
+              >
+                <a
+                  href=${item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-xl font-semibold text-blue-700 hover:underline"
                 >
-                  <a
-                    href=${item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-blue-700 hover:underline font-semibold text-xl"
-                  >
-                    ${item.title}
-                  </a>
-                  <p class="mt-1 text-gray-500 text-sm">${item.pubDateDate.toLocaleDateString()}</p>
-                  <p class="mt-3 text-gray-700 line-clamp-5" dangerouslySetInnerHTML=${{ __html: item.description }}></p>
-                </article>
-              `)}
-            </div>
-          </section>
-        `)}
+                  ${item.title}
+                </a>
+                <p class="mt-1 text-sm text-gray-500">${item.source} — ${item.pubDateDate.toLocaleDateString()}</p>
+                <p class="mt-4 text-gray-700" dangerouslySetInnerHTML=${{ __html: item.description }}></p>
+              </article>
+            `
+          )}
+        </section>
       </div>
     `;
   }
