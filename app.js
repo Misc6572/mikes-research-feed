@@ -47,6 +47,92 @@ scriptReactDOM.onload = () => {
     }
   }
 
+  // Header component: Title + Search/Filter
+  function HeaderBar({ searchTerm, setSearchTerm, filterSource, setFilterSource, sources }) {
+    return html`
+      <header role="banner" class="w-full bg-gray-50 py-10 border-b border-gray-300">
+        <div
+          class="max-w-5xl mx-auto px-4"
+          style="border: 2px dashed #60A5FA; /* DEBUG: blue dashed container */"
+        >
+          <h1
+            class="text-5xl font-extrabold uppercase tracking-widest mb-6 text-center"
+            style="border: 2px dotted #2563EB; /* DEBUG: blue dotted title */"
+          >
+            MIKE'S AMAZING NEWS FEED
+          </h1>
+
+          <form
+            class="flex flex-col sm:flex-row justify-center items-center gap-6 max-w-xl mx-auto"
+            style="border: 2px dotted #F59E0B; /* DEBUG: amber dotted form */"
+            onSubmit=${e => e.preventDefault()}
+            aria-label="Search and filter articles"
+          >
+            <input
+              class="w-full sm:w-72 p-3 rounded border border-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type="search"
+              placeholder="Search titles or descriptions"
+              value=${searchTerm}
+              onInput=${e => setSearchTerm(e.target.value)}
+              aria-label="Search articles"
+            />
+            <select
+              class="w-full sm:w-48 p-3 rounded border border-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value=${filterSource}
+              onChange=${e => setFilterSource(e.target.value)}
+              aria-label="Filter by source"
+            >
+              <option value="ALL">All Sources</option>
+              ${sources.map(src => html`<option value=${src}>${src}</option>`)}
+            </select>
+          </form>
+        </div>
+      </header>
+    `;
+  }
+
+  // Feed Results component
+  function FeedResults({ items, loading }) {
+    return html`
+      <main role="main" class="max-w-5xl mx-auto px-4 py-8">
+        ${loading &&
+        html`<p class="text-center text-lg font-semibold">Loading feeds...</p>`}
+
+        ${!loading && items.length === 0 &&
+        html`<p class="text-center text-gray-500 text-lg">No matching articles.</p>`}
+
+        <section
+          id="listResults"
+          class="grid gap-8 sm:grid-cols-1 md:grid-cols-2"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          ${items.map(
+            item => html`
+              <article
+                class="border-2 border-blue-500 rounded-lg p-6 shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300"
+                key=${item.link}
+                role="article"
+                tabindex="0"
+              >
+                <a
+                  href=${item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-xl font-semibold text-blue-700 hover:underline break-words"
+                >
+                  ${item.title}
+                </a>
+                <p class="mt-1 text-sm text-gray-500">${item.source} — ${item.pubDateDate.toLocaleDateString()}</p>
+                <p class="mt-4 text-gray-700" dangerouslySetInnerHTML=${{ __html: item.description }}></p>
+              </article>
+            `
+          )}
+        </section>
+      </main>
+    `;
+  }
+
   function App() {
     const [feedItems, setFeedItems] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -82,61 +168,22 @@ scriptReactDOM.onload = () => {
       });
     }, [feedItems, filterSource, searchTerm]);
 
+    // Extract all unique sources for the filter dropdown
+    const sources = useMemo(() => {
+      const setSources = new Set(feedItems.map(i => i.source));
+      return Array.from(setSources).sort();
+    }, [feedItems]);
+
     return html`
-      <div class="max-w-5xl mx-auto px-4 py-8">
-        <div class="flex flex-col items-center mb-12 space-y-6">
-          <h1 class="text-center text-4xl font-extrabold uppercase tracking-wide">
-            MIKE'S AMAZING NEWS FEED
-          </h1>
-
-          <div class="flex justify-center items-center gap-4 max-w-xl mx-auto w-full">
-            <input
-              type="text"
-              placeholder="Search titles or descriptions"
-              class="w-full sm:w-72 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value=${searchTerm}
-              onInput=${(e) => setSearchTerm(e.target.value)}
-            />
-            <select
-              class="w-full sm:w-48 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value=${filterSource}
-              onChange=${(e) => setFilterSource(e.target.value)}
-            >
-              <option value="ALL">All Sources</option>
-              ${FEEDS.map(
-                (feed) => html`<option value=${feed.title}>${feed.title}</option>`
-              )}
-            </select>
-          </div>
-        </div>
-
-        ${loading &&
-        html`<p class="text-center text-lg font-semibold">Loading feeds...</p>`}
-
-        ${!loading && filteredItems.length === 0 &&
-        html`<p class="text-center text-gray-500 text-lg">No matching articles.</p>`}
-
-        <section id="listResults" class="space-y-8">
-          ${filteredItems.map(
-            (item) => html`
-              <article
-                class="border-2 border-blue-500 rounded-lg p-6 shadow-lg bg-white hover:shadow-2xl transition-shadow duration-300"
-                key=${item.link}
-              >
-                <a
-                  href=${item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-xl font-semibold text-blue-700 hover:underline"
-                >
-                  ${item.title}
-                </a>
-                <p class="mt-1 text-sm text-gray-500">${item.source} — ${item.pubDateDate.toLocaleDateString()}</p>
-                <p class="mt-4 text-gray-700" dangerouslySetInnerHTML=${{ __html: item.description }}></p>
-              </article>
-            `
-          )}
-        </section>
+      <div class="min-h-screen bg-gray-100">
+        <${HeaderBar}
+          searchTerm=${searchTerm}
+          setSearchTerm=${setSearchTerm}
+          filterSource=${filterSource}
+          setFilterSource=${setFilterSource}
+          sources=${sources}
+        />
+        <${FeedResults} items=${filteredItems} loading=${loading} />
       </div>
     `;
   }
