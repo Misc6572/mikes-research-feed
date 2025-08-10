@@ -82,11 +82,11 @@ scriptReactDOM.onload = () => {
 
     return html`
       <div class="max-w-6xl mx-auto px-4">
-        <h1 class="text-4xl font-extrabold text-center mb-6 mt-6 uppercase tracking-wide">MIKE'S AMAZING NEWS FEED</h1>
+        <h1 class="text-4xl font-extrabold uppercase tracking-wide mb-8 text-center">MIKE'S AMAZING NEWS FEED</h1>
 
-        <div class="flex flex-col sm:flex-row gap-4 mb-10 justify-center items-center">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
           <input
-            class="w-full sm:w-80 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full sm:w-96 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="text"
             placeholder="Search titles or descriptions"
             value=${searchTerm}
@@ -106,10 +106,10 @@ scriptReactDOM.onload = () => {
 
         ${!loading && filteredItems.length === 0 && html`<p class="text-center text-gray-500 text-lg">No matching articles.</p>`}
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           ${filteredItems.map(item => html`
             <article
-              class="bg-white rounded-lg border border-gray-300 p-6 hover:shadow-lg transition-shadow duration-300"
+              class="bg-white rounded-lg border border-gray-300 shadow-md p-6 hover:shadow-xl transition-shadow duration-300"
               key=${item.link}
             >
               <a
