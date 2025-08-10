@@ -85,15 +85,15 @@ scriptReactDOM.onload = () => {
     return html`
       <div class="max-w-5xl mx-auto px-4 py-8">
         <div class="flex flex-col items-center mb-12 space-y-6">
-          <h1 class="text-4xl font-extrabold uppercase tracking-wide text-center">
+          <h1 class="text-center text-4xl font-extrabold uppercase tracking-wide">
             MIKE'S AMAZING NEWS FEED
           </h1>
 
-          <div class="flex flex-col sm:flex-row items-center gap-4 w-full max-w-xl">
+          <div class="flex justify-center items-center gap-4 max-w-xl mx-auto w-full">
             <input
-              class="w-full sm:w-72 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               type="text"
               placeholder="Search titles or descriptions"
+              class="w-full sm:w-72 p-3 border border-gray-400 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               value=${searchTerm}
               onInput=${(e) => setSearchTerm(e.target.value)}
             />
