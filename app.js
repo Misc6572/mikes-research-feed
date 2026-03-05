@@ -29,18 +29,14 @@ scriptReactDOM.onload = () => {
 
   async function fetchFeed(url) {
     try {
-      // Adding a timestamp (_t) forces the proxy to bypass its 2016/old cache
-      const cacheBuster = "&_t=" + Date.now();
-      const res = await fetch(PROXY + encodeURIComponent(url) + cacheBuster);
-      
+      const res = await fetch(PROXY + encodeURIComponent(url));
       if (!res.ok) throw new Error("Network error");
       const data = await res.json();
       if (data.status !== "ok") throw new Error("RSS parse error");
-
+      
       return data.items.map(item => ({
         title: item.title || "No title",
         link: item.link || "#",
-        // Ensure the date is parsed correctly for 2026
         pubDate: item.pubDate || new Date().toISOString(),
         description: item.description || "",
       }));
@@ -144,19 +140,28 @@ scriptReactDOM.onload = () => {
     const [filterSource, setFilterSource] = useState("ALL");
     const [searchTerm, setSearchTerm] = useState("");
 
-    useEffect(() => {
+     useEffect(() => {
       setLoading(true);
       (async () => {
         let all = [];
+        // Calculate the cutoff date (30 days ago)
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
         for (const feed of FEEDS) {
           const items = await fetchFeed(feed.url);
-          const annotated = items.map(i => ({
-            ...i,
-            source: feed.title,
-            pubDateDate: new Date(i.pubDate),
-          }));
+          const annotated = items
+            .map(i => ({
+              ...i,
+              source: feed.title,
+              pubDateDate: new Date(i.pubDate),
+            }))
+            // ONLY keep articles published in the last 30 days
+            .filter(i => i.pubDateDate >= thirtyDaysAgo); 
+            
           all.push(...annotated);
         }
+        
         all.sort((a, b) => b.pubDateDate - a.pubDateDate);
         setFeedItems(all);
         setLoading(false);
