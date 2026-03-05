@@ -91,70 +91,53 @@ scriptReactDOM.onload = () => {
     `;
   }
 
- // Feed Results component with "Click-Box" cards
-function FeedResults({ items, loading }) {
-  return html`
-    <main role="main" class="max-w-5xl mx-auto px-4 py-8">
-      ${loading && html`
-        <div class="flex flex-col items-center justify-center py-20">
-          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p class="text-lg font-semibold text-gray-600">Fetching latest news...</p>
-        </div>
-      `}
+// Feed Results component with Dividers
+  function FeedResults({ items, loading }) {
+    return html`
+      <main role="main" class="max-w-5xl mx-auto px-4 py-8">
+        ${loading &&
+        html`<p class="text-center text-lg font-semibold">Loading feeds...</p>`}
 
-      ${!loading && items.length === 0 && html`
-        <p class="text-center text-gray-500 text-lg py-20">No matching articles found.</p>
-      `}
+        ${!loading && items.length === 0 &&
+        html`<p class="text-center text-gray-500 text-lg">No matching articles.</p>`}
 
-      <section
-        id="listResults"
-        class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2"
-        aria-live="polite"
-      >
-        ${items.map(item => html`
-          <a
-            href=${item.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            key=${item.link}
-            class="group block p-6 bg-white border border-gray-200 rounded-xl shadow-sm 
-                   hover:shadow-md hover:border-blue-400 hover:-translate-y-1 
-                   transition-all duration-200 ease-in-out cursor-pointer"
-          >
-            <div class="flex flex-col h-full">
-              <!-- Source Badge -->
-              <span class="inline-block self-start px-2 py-1 mb-3 text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 rounded-md">
-                ${item.source}
-              </span>
-              
-              <!-- Title -->
-              <h2 class="text-xl font-bold text-gray-900 group-hover:text-blue-700 leading-tight mb-2">
-                ${item.title}
-              </h2>
-              
-              <!-- Date -->
-              <time class="text-sm text-gray-400 mb-4">
-                ${item.pubDateDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-              </time>
-              
-              <!-- Snippet (Trims long HTML) -->
-              <div 
-                class="text-gray-600 text-sm line-clamp-3 overflow-hidden"
-                dangerouslySetInnerHTML=${{ __html: item.description }}
-              ></div>
-              
-              <!-- "Read More" Hint -->
-              <div class="mt-auto pt-4 flex items-center text-blue-600 font-medium text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                Read full article 
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        <section
+          id="listResults"
+          class="flex flex-col" 
+          aria-live="polite"
+        >
+          ${items.map(
+            (item, index) => html`
+              <div key=${item.link}>
+                <article
+                  class="py-10" 
+                  role="article"
+                  tabindex="0"
+                >
+                  <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">${item.source}</span>
+                  <div class="mt-2">
+                    <a
+                      href=${item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-2xl font-bold text-black hover:text-blue-700 transition-colors"
+                    >
+                      ${item.title}
+                    </a>
+                  </div>
+                  <p class="mt-1 text-sm text-gray-500">${item.pubDateDate.toLocaleDateString()}</p>
+                  <p class="mt-4 text-gray-700 leading-relaxed" dangerouslySetInnerHTML=${{ __html: item.description }}></p>
+                </article>
+                
+                <!-- This is the black bar divider -->
+                <hr class="border-t-2 border-black w-full" />
               </div>
-            </div>
-          </a>
-        `)}
-      </section>
-    </main>
-  `;
-}
+            `
+          )}
+        </section>
+      </main>
+    `;
+  }
   function App() {
     const [feedItems, setFeedItems] = useState([]);
     const [loading, setLoading] = useState(true);
