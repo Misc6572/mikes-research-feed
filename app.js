@@ -46,39 +46,29 @@ scriptReactDOM.onload = () => {
   }
 
   // Header component: Title + Search/Filter
-  function HeaderBar({ searchTerm, setSearchTerm, filterSource, setFilterSource, sources }) {
+ function HeaderBar({ searchTerm, setSearchTerm, filterSource, setFilterSource, sources }) {
     return html`
-      <header role="banner" class="w-full bg-gray-50 py-10 border-b border-gray-300">
-        <div
-          class="max-w-5xl mx-auto px-4"
-          style="border: 2px dashed #60A5FA; /* DEBUG: blue dashed container */"
-        >
-          <h1
-            class="text-5xl font-extrabold uppercase tracking-widest mb-6 text-center"
-            style="border: 2px dotted #2563EB; /* DEBUG: blue dotted title */"
-          >
+      <header role="banner" class="w-full bg-white py-12 border-b border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+          <h1 class="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8 text-black">
             MIKE'S AMAZING NEWS FEED
           </h1>
 
           <form
-            class="flex flex-col sm:flex-row justify-center items-center gap-6 max-w-xl mx-auto"
-            style="border: 2px dotted #F59E0B; /* DEBUG: amber dotted form */"
+            class="flex flex-col sm:flex-row justify-center items-center gap-4 max-w-2xl mx-auto"
             onSubmit=${e => e.preventDefault()}
-            aria-label="Search and filter articles"
           >
             <input
-              class="w-full sm:w-72 p-3 rounded border border-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full sm:flex-1 p-4 rounded-none border-2 border-black focus:bg-yellow-50 outline-none transition-colors placeholder-gray-400"
               type="search"
-              placeholder="Search titles or descriptions"
+              placeholder="Search intelligence..."
               value=${searchTerm}
               onInput=${e => setSearchTerm(e.target.value)}
-              aria-label="Search articles"
             />
             <select
-              class="w-full sm:w-48 p-3 rounded border border-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full sm:w-auto p-4 rounded-none border-2 border-black bg-white font-bold uppercase text-xs tracking-widest cursor-pointer hover:bg-gray-50"
               value=${filterSource}
               onChange=${e => setFilterSource(e.target.value)}
-              aria-label="Filter by source"
             >
               <option value="ALL">All Sources</option>
               ${sources.map(src => html`<option value=${src}>${src}</option>`)}
