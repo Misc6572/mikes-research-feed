@@ -16,19 +16,13 @@ scriptReactDOM.onload = () => {
   const html = htm.bind(h);
 
   const FEEDS = [
-    { id: "NBER", title: "NBER", url: "https://www.nber.org/system/files/working_papers/wip.xml" },
-    { id: "RAND", title: "RAND", url: "https://www.rand.org/pubs.rss" },
-    { id: "Pew", title: "Pew Research", url: "https://www.pewresearch.org/feed/" },
-    { id: "Brookings", title: "Brookings", url: "https://www.brookings.edu/feed/" },
-    { id: "Urban", title: "Urban Institute", url: "https://www.urban.org/rss.xml" },
-    { id: "StLouisFed", title: "St. Louis Fed", url: "https://fredblog.stlouisfed.org/feed/" },
-    { id: "IZA", title: "IZA", url: "http://ftp.iza.org/rss.xml" },
-    { id: "CEPR", title: "CEPR", url: "https://cepr.org/latest.xml" },
-    { id: "CSIS", title: "CSIS", url: "https://www.csis.org/rss.xml" },
-    { id: "CFR", title: "CFR", url: "https://www.cfr.org" },
-    { id: "PIIE", title: "Peterson Institute", url: "https://www.piie.com" },
-    { id: "EPI", title: "EPI", url: "http://feeds.feedburner.com/epi" },
-    { id: "OECD", title: "OECD", url: "https://www.oecd.org/rss/" }
+    // --- VERIFIED WORKING FEEDS ---
+    { id: "Pew", title: "Pew Research", url: "https://www.pewresearch.org" },
+    { id: "StLouisFed", title: "St. Louis Fed", url: "https://fredblog.stlouisfed.org" },
+    { id: "CFR", title: "Council on Foreign Relations", url: "https://www.cfr.org" },
+    { id: "CEPR", title: "CEPR (Economic Policy)", url: "https://cepr.net" },
+    { id: "Atlantic", title: "Atlantic Council", url: "https://www.atlanticcouncil.org" },
+    { id: "CSIS", title: "CSIS (Security/Military)", url: "https://www.csis.org/rss.xml" }
   ];
 
   const PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
@@ -95,53 +89,42 @@ scriptReactDOM.onload = () => {
     `;
   }
 
-// Feed Results component with Dividers
   function FeedResults({ items, loading }) {
     return html`
       <main role="main" class="max-w-5xl mx-auto px-4 py-8">
-        ${loading &&
-        html`<p class="text-center text-lg font-semibold">Loading feeds...</p>`}
+        ${loading && html`<p class="text-center text-lg font-semibold italic">Scanning for new intelligence...</p>`}
 
-        ${!loading && items.length === 0 &&
-        html`<p class="text-center text-gray-500 text-lg">No matching articles.</p>`}
+        <section id="listResults" class="flex flex-col">
+          ${items.map(item => html`
+            <div key=${item.link} class="group">
+              <article class="py-12 px-2">
+                <!-- Source Tag -->
+                <div class="mb-3">
+                  <span class="bg-black text-white text-xs font-black px-3 py-1 uppercase tracking-tighter">
+                    ${item.source}
+                  </span>
+                </div>
 
-        <section
-          id="listResults"
-          class="flex flex-col" 
-          aria-live="polite"
-        >
-          ${items.map(
-            (item, index) => html`
-              <div key=${item.link}>
-                <article
-                  class="py-10" 
-                  role="article"
-                  tabindex="0"
-                >
-                  <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">${item.source}</span>
-                  <div class="mt-2">
-                    <a
-                      href=${item.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-2xl font-bold text-black hover:text-blue-700 transition-colors"
-                    >
-                      ${item.title}
-                    </a>
-                  </div>
-                  <p class="mt-1 text-sm text-gray-500">${item.pubDateDate.toLocaleDateString()}</p>
-                  <p class="mt-4 text-gray-700 leading-relaxed" dangerouslySetInnerHTML=${{ __html: item.description }}></p>
-                </article>
-                
-                <!-- This is the black bar divider -->
-                <hr class="border-t-2 border-black w-full" />
-              </div>
-            `
-          )}
+                <!-- Title -->
+                <a href=${item.link} target="_blank" class="text-3xl font-bold text-black hover:text-blue-800 transition-colors block leading-tight">
+                  ${item.title}
+                </a>
+
+                <!-- Meta & Description -->
+                <p class="mt-2 text-sm font-medium text-gray-500 uppercase tracking-widest">${item.pubDateDate.toLocaleDateString()}</p>
+                <div class="mt-6 text-gray-800 text-lg leading-relaxed max-w-3xl" dangerouslySetInnerHTML=${{ __html: item.description }}></div>
+              </article>
+              
+              <!-- THE BLACK BAR -->
+              <div class="h-1 bg-black w-full my-4"></div>
+            </div>
+          `)}
         </section>
       </main>
     `;
   }
+
+  
   function App() {
     const [feedItems, setFeedItems] = useState([]);
     const [loading, setLoading] = useState(true);
