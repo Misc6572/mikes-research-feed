@@ -24,6 +24,10 @@ scriptReactDOM.onload = () => {
     { id: "StLouisFed", title: "St. Louis Fed", url: "https://fredblog.stlouisfed.org/feed/" },
     { id: "IZA", title: "IZA", url: "http://ftp.iza.org/rss.xml" },
     { id: "CEPR", title: "CEPR", url: "https://cepr.org/latest.xml" },
+    { id: "CSIS", title: "CSIS", url: "https://www.csis.org/rss.xml" },
+    { id: "CFR", title: "CFR", url: "https://www.cfr.org" },
+    { id: "PIIE", title: "Peterson Institute", url: "https://www.piie.com" },
+    { id: "EPI", title: "EPI", url: "http://feeds.feedburner.com/epi" },
     { id: "OECD", title: "OECD", url: "https://www.oecd.org/rss/" }
   ];
 
