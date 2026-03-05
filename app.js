@@ -16,13 +16,17 @@ scriptReactDOM.onload = () => {
   const html = htm.bind(h);
 
   const FEEDS = [
-    // --- VERIFIED WORKING FEEDS ---
-    { id: "Pew", title: "Pew Research", url: "https://www.pewresearch.org" },
-    { id: "StLouisFed", title: "St. Louis Fed", url: "https://fredblog.stlouisfed.org" },
-    { id: "CFR", title: "Council on Foreign Relations", url: "https://www.cfr.org" },
-    { id: "CEPR", title: "CEPR (Economic Policy)", url: "https://cepr.net" },
-    { id: "Atlantic", title: "Atlantic Council", url: "https://www.atlanticcouncil.org" },
-    { id: "CSIS", title: "CSIS (Security/Military)", url: "https://www.csis.org/rss.xml" }
+    { id: "NBER", title: "NBER", url: "https://www.nber.org/system/files/working_papers/wip.xml" },
+    { id: "RAND", title: "RAND", url: "https://www.rand.org/pubs.rss" },
+    { id: "Pew", title: "Pew Research", url: "https://www.pewresearch.org/feed/" },
+    { id: "Brookings", title: "Brookings", url: "https://www.brookings.edu/feed/" },
+    { id: "Urban", title: "Urban Institute", url: "https://www.urban.org/rss.xml" },
+    { id: "StLouisFed", title: "St. Louis Fed", url: "https://fredblog.stlouisfed.org/feed/" },
+    { id: "IZA", title: "IZA", url: "http://ftp.iza.org/rss.xml" },
+    { id: "CEPR", title: "CEPR", url: "https://cepr.org/latest.xml" },
+    { id: "CSIS", title: "CSIS", url: "https://www.csis.org/rss.xml" },
+    { id: "ECFR", title: "European Council on Foreign Relations", url: "https://ecfr.eu/feeds/" },
+    { id: "OECD", title: "OECD", url: "https://www.oecd.org/rss/" }
   ];
 
   const PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
