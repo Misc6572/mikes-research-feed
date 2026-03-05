@@ -79,41 +79,68 @@ scriptReactDOM.onload = () => {
       </header>
     `;
   }
+
+  
+  // Feed Results component: High-Margin "Magazine" Layout
   function FeedResults({ items, loading }) {
     return html`
-      <main role="main" class="max-w-5xl mx-auto px-4 py-8">
-        ${loading && html`<p class="text-center text-lg font-semibold italic">Scanning for new intelligence...</p>`}
+      <main role="main" class="max-w-4xl mx-auto px-4 py-8">
+        ${loading && html`
+          <div class="flex flex-col items-center justify-center py-20">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-black mb-4"></div>
+            <p class="text-xl font-bold tracking-tighter uppercase">Analyzing Intelligence...</p>
+          </div>
+        `}
 
-        <section id="listResults" class="flex flex-col">
-          ${items.map(item => html`
-            <div key=${item.link} class="group">
-              <article class="py-12 px-2">
-                <!-- Source Tag -->
-                <div class="mb-3">
-                  <span class="bg-black text-white text-xs font-black px-3 py-1 uppercase tracking-tighter">
+        <section id="listResults" class="flex flex-col" aria-live="polite">
+          ${items.map(
+            (item) => html`
+              <article 
+                key=${item.link} 
+                class="py-24 first:pt-12 border-b border-gray-100 last:border-0"
+                role="article"
+              >
+                <!-- Source Badge -->
+                <div class="mb-6">
+                  <span class="text-xs font-black bg-black text-white px-2 py-1 uppercase tracking-widest">
                     ${item.source}
                   </span>
                 </div>
 
-                <!-- Title -->
-                <a href=${item.link} target="_blank" class="text-3xl font-bold text-black hover:text-blue-800 transition-colors block leading-tight">
-                  ${item.title}
-                </a>
+                <!-- Title (The Big Header) -->
+                <h2 class="mb-4">
+                  <a
+                    href=${item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-4xl md:text-5xl font-extrabold text-black hover:text-blue-800 transition-colors leading-none tracking-tight block"
+                  >
+                    ${item.title}
+                  </a>
+                </h2>
 
-                <!-- Meta & Description -->
-                <p class="mt-2 text-sm font-medium text-gray-500 uppercase tracking-widest">${item.pubDateDate.toLocaleDateString()}</p>
-                <div class="mt-6 text-gray-800 text-lg leading-relaxed max-w-3xl" dangerouslySetInnerHTML=${{ __html: item.description }}></div>
+                <!-- Meta Info -->
+                <div class="flex items-center gap-4 mb-8 text-sm font-bold text-gray-400 uppercase tracking-tighter">
+                  <time>${item.pubDateDate.toLocaleDateString()}</time>
+                  <span>•</span>
+                  <span>Expert Analysis</span>
+                </div>
+
+                <!-- Description/Body -->
+                <div 
+                  class="text-gray-700 text-xl leading-relaxed prose prose-lg max-w-none" 
+                  dangerouslySetInnerHTML=${{ __html: item.description }}
+                ></div>
+                
+                <!-- This creates the "5 extra returns" effect visually -->
+                <div class="mt-20"></div>
               </article>
-              
-              <!-- THE BLACK BAR -->
-              <div class="h-1 bg-black w-full my-4"></div>
-            </div>
-          `)}
+            `
+          )}
         </section>
       </main>
     `;
   }
-
   
   function App() {
     const [feedItems, setFeedItems] = useState([]);
