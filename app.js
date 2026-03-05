@@ -48,37 +48,37 @@ scriptReactDOM.onload = () => {
   // Header component: Title + Search/Filter
  function HeaderBar({ searchTerm, setSearchTerm, filterSource, setFilterSource, sources }) {
     return html`
-      <header role="banner" class="w-full bg-white py-12 border-b border-gray-200">
-        <div class="max-w-5xl mx-auto px-4 text-center">
-          <h1 class="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8 text-black">
+      <header role="banner" class="w-full bg-white py-12 border-b-4 border-black">
+        <div class="max-w-5xl mx-auto px-4">
+          
+          <!-- Title: Centered and Clean -->
+          <h1 class="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-8 text-center text-black">
             MIKE'S AMAZING NEWS FEED
           </h1>
 
-          <form
-            class="flex flex-col sm:flex-row justify-center items-center gap-4 max-w-2xl mx-auto"
-            onSubmit=${e => e.preventDefault()}
-          >
+          <!-- Form: Centered and Clean -->
+          <div class="flex flex-col sm:flex-row justify-center items-center gap-4 max-w-2xl mx-auto">
             <input
-              class="w-full sm:flex-1 p-4 rounded-none border-2 border-black focus:bg-yellow-50 outline-none transition-colors placeholder-gray-400"
+              class="w-full sm:flex-1 p-4 border-2 border-black focus:ring-2 focus:ring-blue-500 outline-none"
               type="search"
-              placeholder="Search intelligence..."
+              placeholder="Search news..."
               value=${searchTerm}
               onInput=${e => setSearchTerm(e.target.value)}
             />
             <select
-              class="w-full sm:w-auto p-4 rounded-none border-2 border-black bg-white font-bold uppercase text-xs tracking-widest cursor-pointer hover:bg-gray-50"
+              class="w-full sm:w-auto p-4 border-2 border-black bg-white font-bold"
               value=${filterSource}
               onChange=${e => setFilterSource(e.target.value)}
             >
               <option value="ALL">All Sources</option>
               ${sources.map(src => html`<option value=${src}>${src}</option>`)}
             </select>
-          </form>
+          </div>
+          
         </div>
       </header>
     `;
   }
-
   function FeedResults({ items, loading }) {
     return html`
       <main role="main" class="max-w-5xl mx-auto px-4 py-8">
