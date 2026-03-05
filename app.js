@@ -85,58 +85,49 @@ scriptReactDOM.onload = () => {
   function FeedResults({ items, loading }) {
     return html`
       <main role="main" class="max-w-4xl mx-auto px-4 py-8">
-        ${loading && html`
-          <div class="flex flex-col items-center justify-center py-20">
-            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-black mb-4"></div>
-            <p class="text-xl font-bold tracking-tighter uppercase">Analyzing Intelligence...</p>
-          </div>
-        `}
+        ${loading && html`<p class="text-center py-20 font-bold uppercase tracking-widest">Scanning Intelligence...</p>`}
 
         <section id="listResults" class="flex flex-col" aria-live="polite">
-          ${items.map(
-            (item) => html`
-              <article 
-                key=${item.link} 
-                class="py-24 first:pt-12 border-b border-gray-100 last:border-0"
-                role="article"
-              >
-                <!-- Source Badge -->
-                <div class="mb-6">
-                  <span class="text-xs font-black bg-black text-white px-2 py-1 uppercase tracking-widest">
-                    ${item.source}
-                  </span>
-                </div>
+          ${items.map(item => html`
+            <article 
+              key=${item.link} 
+              class="py-32 border-b border-gray-100 last:border-0"
+              role="article"
+            >
+              <!-- Bold Source Label -->
+              <div class="mb-8">
+                <span class="bg-black text-white text-xs font-black px-3 py-1 uppercase tracking-widest">
+                  ${item.source}
+                </span>
+              </div>
 
-                <!-- Title (The Big Header) -->
-                <h2 class="mb-4">
-                  <a
-                    href=${item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-4xl md:text-5xl font-extrabold text-black hover:text-blue-800 transition-colors leading-none tracking-tight block"
-                  >
-                    ${item.title}
-                  </a>
-                </h2>
+              <!-- Massive Headline -->
+              <h2 class="mb-6">
+                <a
+                  href=${item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-4xl md:text-6xl font-extrabold text-black hover:text-blue-800 transition-colors leading-none tracking-tighter block"
+                >
+                  ${item.title}
+                </a>
+              </h2>
 
-                <!-- Meta Info -->
-                <div class="flex items-center gap-4 mb-8 text-sm font-bold text-gray-400 uppercase tracking-tighter">
-                  <time>${item.pubDateDate.toLocaleDateString()}</time>
-                  <span>•</span>
-                  <span>Expert Analysis</span>
-                </div>
+              <!-- Date and Tag -->
+              <p class="text-sm font-bold text-gray-400 uppercase tracking-tighter mb-10">
+                ${item.pubDateDate.toLocaleDateString()} • RESEARCH UPDATE
+              </p>
 
-                <!-- Description/Body -->
-                <div 
-                  class="text-gray-700 text-xl leading-relaxed prose prose-lg max-w-none" 
-                  dangerouslySetInnerHTML=${{ __html: item.description }}
-                ></div>
-                
-                <!-- This creates the "5 extra returns" effect visually -->
-                <div class="mt-20"></div>
-              </article>
-            `
-          )}
+              <!-- Body Text -->
+              <div 
+                class="text-gray-700 text-xl md:text-2xl leading-relaxed max-w-none" 
+                dangerouslySetInnerHTML=${{ __html: item.description }}
+              ></div>
+              
+              <!-- This creates the "extra returns" effect visually -->
+              <div class="mt-20"></div>
+            </article>
+          `)}
         </section>
       </main>
     `;
