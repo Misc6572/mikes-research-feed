@@ -29,18 +29,23 @@ scriptReactDOM.onload = () => {
 
   async function fetchFeed(url) {
     try {
-      const res = await fetch(PROXY + encodeURIComponent(url));
+      // Adding a timestamp (_t) forces the proxy to bypass its 2016/old cache
+      const cacheBuster = "&_t=" + Date.now();
+      const res = await fetch(PROXY + encodeURIComponent(url) + cacheBuster);
+      
       if (!res.ok) throw new Error("Network error");
       const data = await res.json();
       if (data.status !== "ok") throw new Error("RSS parse error");
+
       return data.items.map(item => ({
         title: item.title || "No title",
         link: item.link || "#",
-        pubDate: item.pubDate || "",
+        // Ensure the date is parsed correctly for 2026
+        pubDate: item.pubDate || new Date().toISOString(),
         description: item.description || "",
       }));
     } catch (e) {
-      console.warn(`Skipping feed at ${url} due to error: ${e.message}`);
+      console.warn(`Skipping feed at ${url}: ${e.message}`);
       return [];
     }
   }
